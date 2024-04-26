@@ -1,0 +1,20 @@
+module tb;
+reg clk = 0;
+reg start = 0;
+reg [4:0] s_node;
+reg [4:0] e_node;
+reg [2:0]mode;
+
+wire done;
+wire [9:0] finall;
+//wire [10*5-1:0]final_temp;
+path_planner uut (clk, start, s_node, e_node,mode, done, finall);
+always begin
+clk <= 0; #1;
+clk <= 1; #1;
+end
+initial begin
+s_node <= 9;
+e_node <= 15;
+mode<=2'b111; #300
+mode<=2'b000; #30
