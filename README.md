@@ -1,4 +1,4 @@
-# Djikstra-s_Verilog
+# Djikstra's Implementation in real world application_Verilog
 This project focusses on implementation of Djikistra's Algorithm using Verilog
 
 Dijkstra's algorithm is a crucial tool in graph theory and computer science, with broad applications
