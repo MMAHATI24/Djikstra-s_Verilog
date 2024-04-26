@@ -1,0 +1,254 @@
+module path_planner
+#(parameter node_count = 22, parameter max_edges = 4)
+(
+input clk,
+input start,
+input [4:0] s_node,
+input [4:0] e_node,
+input [2:0]mode,
+output reg done,
+output reg [9:0] finall
+);
+reg [10*5-1:0] final_path;
+reg [4:0]in=5'b10110;
+reg [1:0]state=0;
+reg [4:0]map1[21:0];
+reg [4:0]map2[22:0];
+reg [20:0]visit;
+reg [20:0]visited;
+integer i,k,count;
+reg [4:0]w[20:0][20:0];
+reg [10*5-1:0]final_temp;
+reg [4:0]prev;
+reg [4:0]j;
+initial begin
+for(i=0;i<21;i=i+1) begin
+for(k=0;k<21;k=k+1)
+w[i][k]=5'b10110;
+end
+j=0;
+final_path=0;
+map1[21]=5'b10101;
+map2[21]=5'b10101;
+
+map2[22]=5'b10110;
+done=1;
+
+//Node0= Starting point
+//Node1= Gate
+//Node2= Logo
+//Node3= NITW Quarters
+//Node4= LH
+//Node5= FS Entry
+//Node6= FS Exit
+//Node7= Administration Building
+//Node8= OLD Auditorium
+//Node9= Dispensary
+//Node10=Civil Block
+//Node11=11TH Block
+//Node12=Block Junction
+//Node13=8TH Block
+//Node14=Stadium
+//Node15=PED
+//Node16=CRIF
+//Node17=1K Hostel
+//Node18=ECE
+//Node19=Parking Area
+//Node20=1.8K Hostel
+
+w[0][1]=1;
+w[1][0]=1;
+w[1][2]=1;
+w[2][1]=1;
+w[2][3]=1;
+w[3][2]=1;
+w[2][6]=3;
+w[6][2]=3;
+w[2][4]=1;
+
+w[4][2]=1;
+w[4][8]=2;
+w[8][4]=2;
+w[4][7]=1;
+w[7][4]=1;
+w[4][5]=2;
+w[5][4]=2;
+w[5][18]=1;
+w[18][5]=1;
+w[5][7]=2;
+w[7][5]=2;
+w[6][19]=2;
+w[19][6]=2;
+w[6][20]=1;
+w[20][6]=1;
+w[7][8]=2;
+w[8][7]=2;
+w[8][9]=3;
+w[9][8]=3;
+w[9][10]=1;
+w[10][9]=1;
+w[9][12]=1;
+w[12][9]=1;
+w[12][11]=1;
+w[11][12]=1;
+w[12][13]=1;
+w[13][12]=1;
+w[9][14]=1;
+w[14][9]=1;
+w[13][14]=1;
+w[14][13]=1;
+w[13][16]=3;
+w[16][13]=3;
+
+w[14][15]=2;
+w[15][14]=2;
+w[15][16]=1;
+w[16][15]=1;
+w[15][18]=2;
+w[18][15]=2;
+w[16][19]=1;
+w[19][16]=1;
+w[17][19]=1;
+w[19][17]=1;
+end
+always@(negedge clk)begin
+case(state)
+0: begin
+if(start)be
+g in
+done=0;
+state=1;
+end
+end
+
+1: begin
+for(i=0;i<21;i=i+1)begin
+map1[i]=in; visit[i]=0;
+visited[i]=0;
+end
+map1[s_node]=0;
+map2[s_node]=5'b10110;
+visit[s_node]=1;
+state=2;
+end
+2: begin if(visited!=21'b111111111111111111111
+)begin if(j<21)begin
+
+if(visit[j])
+cal(j);
+j=j+1'b1;
+end
+else
+j=0;
+end
+
+else
+begin
+state=3; count=10;
+end
+end
+
+3: begin
+case(count)10: begin
+final_temp[4:0]=e_node;
+prev=e_node;
+count=9;
+end
+9: begin final_temp[9:5]=map2[prev];
+prev=map2[prev];
+count=8; end
+8: begin final_temp[14:10]=map2[prev];
+prev=map2[prev];
+count=7; end
+7: begin
+final_temp[19:15]=map2[prev];
+prev=map2[prev];
+count=6; end
+6: begin
+final_temp[24:20]=map2[prev];
+
+prev=map2[prev];
+count=5;
+
+end
+5: begin
+final_temp[29:25]=map2[ prev];
+prev=map2[prev]; count=4;
+end
+
+4: begin
+final_temp[34:30]=map2[prev];
+prev=map2[prev];
+count=3;
+end
+
+3: begin
+final_temp[39:35]=map2[prev];
+prev=map2[prev]; count=2;
+end
+
+2: begin
+final_temp[44:40]=map2[prev];
+prev=map2[prev];
+count=1;
+end
+1: begin
+final_temp[49:45]=map2[prev];
+prev=map2[prev];
+count=0;
+end
+0: begin
+
+final_path=final_temp;
+done=1; state=0;
+count=10;
+end
+endcase
+end
+endcase
+end
+always@(mode)
+begin
+case(mode)
+2'b000:
+begin finall=final_path[9:0];
+End
+2'b001:
+begin
+finall=final_path[19:10]; end
+2'b010:
+
+begin
+finall=final_path[29:20];
+end
+2'b011:
+begin
+finall=final_path[39:30]; end
+2'b100:
+
+begin
+finall=final_path[49:40]; end
+2'b111:
+begin
+
+finall=0;
+end endcase
+end
+
+task automatic cal(input [4:0]j); begin
+for(i=0;i<21;i=i+1)begin
+if(w[j][i]!=in)begin
+if(!visited[i])begin
+if(w[i][j]+map1[j]<map1[i])begin
+map1[i]=w[i][j]+map1[j];
+visit[i]=1;
+map2[i]=j;
+end
+end
+end
+end
+visited[j]=1;
+visit[j]=0;
+end
+endtask
+endmodule
